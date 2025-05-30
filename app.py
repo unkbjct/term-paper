@@ -1,5 +1,8 @@
 import sys
+import core
 import numpy as np
+
+import matplotlib.pyplot as plt
 
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QLabel, QGridLayout, QHBoxLayout, QLineEdit, QPushButton, QFormLayout
 from PyQt5.QtGui import QIntValidator
@@ -84,8 +87,29 @@ class Form(QVBoxLayout):
         self.pb.clicked.connect(self.calculate)
 
     def calculate(self):
-        print(eval(self.function.inpLayout.le.text()))
+        formula = self.function.inpLayout.le.text()
+        a = self.segments.inpLayout.leA.text()
+        b = self.segments.inpLayout.leB.text()
+        n = self.parts.le.text()
+        y0 = self.y0.le.text()
+        
+        x, y = core.euler(formula, float(a), float(b), float(n), float(y0))
+        
+        plt.figure(figsize=(10, 10))
+        plt.plot(x, y, label=r'точки Эйлера', color='b')
+        plt.plot(x, y, 'o', color='r')
 
+        plt.axhline(0, color='black', linewidth=1)
+        plt.axvline(0, color='black', linewidth=1)
+
+        plt.legend()
+        plt.xlabel("x")
+        plt.ylabel("y")
+        plt.title("График метода Эйлера задачи Коши")
+        plt.grid(True)
+
+        plt.show()
+        
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
