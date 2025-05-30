@@ -105,18 +105,14 @@ class Form(QVBoxLayout):
             if method == 0:
                 x, y = core.euler(formula, a, b, n, y0)
                 plt.plot(x, y, label=r'Метод Эйлера', color='b')
-                plt.plot(x, y, 'o', color='g')
             elif method == 1:
                 x, y = core.hoyne(formula, a, b, n, y0)
                 plt.plot(x, y, label=r'Метод Хойна', color='b')
-                plt.plot(x, y, 'o', color='g')
             else:
                 x, y = core.euler(formula, a, b, n, y0)
                 plt.plot(x, y, label=r'Метод Эйлера', color='b')
-                plt.plot(x, y, 'o', color='g')
                 x, y = core.hoyne(formula, a, b, n, y0)
                 plt.plot(x, y, label=r'Метод Хойна', color='r')
-                plt.plot(x, y, 'o', color='g')
 
         except ValueError:
             msg = QMessageBox()
