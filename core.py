@@ -28,7 +28,7 @@ def koshi():
     x = list(map(lambda x: x[0], result))
     y = list(map(lambda x: x[1], result))
 
-        plt.figure(figsize=(8, 6))
+    plt.figure(figsize=(8, 6))
     plt.plot(x, y, label=r'точки Эйлера', color='b')
 
     plt.axhline(0, color='black', linewidth=1)
