@@ -4,17 +4,8 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 
-from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QLabel, QGridLayout, QHBoxLayout, QLineEdit, QPushButton, QFormLayout
+from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QLabel, QHBoxLayout, QLineEdit, QPushButton, QFormLayout, QComboBox, QMessageBox
 from PyQt5.QtGui import QIntValidator
-
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.figure import Figure
-
-class MplCanvas(FigureCanvas):
-    def __init__(self, parent=None):
-        fig = Figure(figsize=(5, 4), dpi=100)
-        self.axes = fig.add_subplot(111)
-        super().__init__(fig)
 
 class Form(QVBoxLayout):
     def __init__(self, parent=None):
@@ -77,6 +68,19 @@ class Form(QVBoxLayout):
         tmpWidget.setLayout(self.y0)
         layout.addWidget(tmpWidget)
 
+        self.method = QFormLayout()
+        self.method.label = QLabel('Выберите метод вычисления ОДУ:')
+        self.method.cb = QComboBox()
+        self.method.cb.addItem('Метод Эйлера', 0)
+        self.method.cb.addItem('Метод Хона', 1)
+        self.method.cb.addItem('Сравнить оба метода', 2)
+        self.method.addWidget(self.method.label)
+        self.method.addWidget(self.method.cb)
+
+        tmpWidget = QWidget()
+        tmpWidget.setLayout(self.method)
+        layout.addWidget(tmpWidget)
+
         self.pb = QPushButton()
         self.pb.setObjectName("calculate")
         self.pb.setText("Вычислить") 
@@ -93,11 +97,44 @@ class Form(QVBoxLayout):
         n = self.parts.le.text()
         y0 = self.y0.le.text()
         
-        x, y = core.euler(formula, float(a), float(b), float(n), float(y0))
-        
-        plt.figure(figsize=(10, 10))
-        plt.plot(x, y, label=r'точки Эйлера', color='b')
-        plt.plot(x, y, 'o', color='r')
+        method = self.method.cb.currentData()
+
+        try:
+            a, b, n, y0 = float(a), float(b), float(n), float(y0)
+
+            if method == 0:
+                x, y = core.euler(formula, a, b, n, y0)
+                plt.plot(x, y, label=r'Метод Эйлера', color='b')
+                plt.plot(x, y, 'o', color='g')
+            elif method == 1:
+                x, y = core.hoyne(formula, a, b, n, y0)
+                plt.plot(x, y, label=r'Метод Хойна', color='b')
+                plt.plot(x, y, 'o', color='g')
+            else:
+                x, y = core.euler(formula, a, b, n, y0)
+                plt.plot(x, y, label=r'Метод Эйлера', color='b')
+                plt.plot(x, y, 'o', color='g')
+                x, y = core.hoyne(formula, a, b, n, y0)
+                plt.plot(x, y, label=r'Метод Хойна', color='r')
+                plt.plot(x, y, 'o', color='g')
+
+        except ValueError:
+            msg = QMessageBox()
+            msg.setWindowTitle("Error!")
+            msg.setText('Введенные данные не корректны!!')
+            msg.setIcon(QMessageBox.Icon.Warning)
+            msg.setDefaultButton(QMessageBox.StandardButton.Ok)
+            msg.exec()
+            return
+
+        except ZeroDivisionError:
+            msg = QMessageBox()
+            msg.setWindowTitle("Error!")
+            msg.setText('Вы ввели ноль частей!!')
+            msg.setIcon(QMessageBox.Icon.Warning)
+            msg.setDefaultButton(QMessageBox.StandardButton.Ok)
+            msg.exec()
+            return
 
         plt.axhline(0, color='black', linewidth=1)
         plt.axvline(0, color='black', linewidth=1)
@@ -105,7 +142,7 @@ class Form(QVBoxLayout):
         plt.legend()
         plt.xlabel("x")
         plt.ylabel("y")
-        plt.title("График метода Эйлера задачи Коши")
+        plt.title(f"График уравнения y' = {formula}")
         plt.grid(True)
 
         plt.show()
@@ -125,13 +162,6 @@ class MainWindow(QMainWindow):
         container.setLayout(main_layout)
 
         self.setCentralWidget(container)
-
-    def plot_graph(self):
-        x = np.linspace(-10, 10, 100)
-        y = np.sin(x)
-        self.canvas.axes.plot(x, y)
-        self.canvas.axes.set_title('y = sinx(x)')
-        self.canvas.draw()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
