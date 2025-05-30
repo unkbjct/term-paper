@@ -63,6 +63,17 @@ class Form(QVBoxLayout):
         tmpWidget.setLayout(self.parts)
         layout.addWidget(tmpWidget)
 
+        self.y0 = QFormLayout()
+        self.y0.label = QLabel('Введите значение функции в точке f(a):')
+        self.y0.le = QLineEdit()
+        self.y0.le.setValidator(QIntValidator())
+        self.y0.addWidget(self.y0.label)
+        self.y0.addWidget(self.y0.le)
+
+        tmpWidget = QWidget()
+        tmpWidget.setLayout(self.y0)
+        layout.addWidget(tmpWidget)
+
         self.pb = QPushButton()
         self.pb.setObjectName("calculate")
         self.pb.setText("Вычислить") 
