@@ -16,6 +16,7 @@ def euler(formula, a, b, n, y0):
     while a <= b:
         function = formula.subs({x: x0, y: y0})
         f = sp.sympify(function)
+        print(f)
         a += h
         x0, y0 = a, y0 + h * f
         xes = np.append(xes, [x0])

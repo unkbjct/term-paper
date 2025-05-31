@@ -4,8 +4,28 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 
-from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QLabel, QHBoxLayout, QLineEdit, QPushButton, QFormLayout, QComboBox, QMessageBox
-from PyQt5.QtGui import QIntValidator
+from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QLabel, QHBoxLayout, QLineEdit, QPushButton, QFormLayout, QComboBox, QMessageBox, QDialog
+from PyQt5.QtGui import QIntValidator, QIcon
+
+class Helper(QVBoxLayout):
+    def __init__(self, parent=None):
+        super(Helper, self).__init__(parent)
+
+        self.qdl = QDialog()
+        self.qdl.setWindowTitle('HELPER')
+        self.qdl.setMinimumSize(200, 50)
+
+        layout = QVBoxLayout()
+        layout.title = QLabel('Вы можете использовать следующие мат функции')
+        layout.title.setStyleSheet('font-size: 16px; font-weight: 800')
+        layout.addWidget(layout.title)
+        layout.addWidget(QLabel('sin(x) | cos(x) | tg(x)'))
+        layout.addWidget(QLabel('Корень: sqrt(x)'))
+        layout.addWidget(QLabel('Возведение в степень: x ** y'))
+        layout.addWidget(QLabel('Натуральный логарифм: log(x)'))
+
+        self.qdl.setLayout(layout)
+        self.qdl.exec()
 
 class Form(QVBoxLayout):
     def __init__(self, parent=None):
@@ -18,8 +38,12 @@ class Form(QVBoxLayout):
         self.function.inpLayout = QHBoxLayout()
         self.function.inpLayout.label = QLabel("y' = ")
         self.function.inpLayout.le = QLineEdit()
+        self.function.inpLayout.button = QPushButton()
+        self.function.inpLayout.button.setIcon(QIcon('resources/question.png'))
+        self.function.inpLayout.button.clicked.connect(self.showHelp)
         self.function.inpLayout.addWidget(self.function.inpLayout.label)
         self.function.inpLayout.addWidget(self.function.inpLayout.le)
+        self.function.inpLayout.addWidget(self.function.inpLayout.button)
         self.function.addWidget(self.function.label)
         self.function.addLayout(self.function.inpLayout)
 
@@ -89,6 +113,9 @@ class Form(QVBoxLayout):
 
         self.addLayout(layout)
         self.pb.clicked.connect(self.calculate)
+
+    def showHelp(self):
+        helper = Helper()
 
     def calculate(self):
         formula = self.function.inpLayout.le.text()
