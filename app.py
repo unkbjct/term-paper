@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QLabel, QHBoxLayout, QLineEdit, QPushButton, QFormLayout, QComboBox, QMessageBox, QDialog
-from PyQt5.QtGui import QIntValidator, QIcon
+from PyQt5.QtGui import QDoubleValidator, QIcon
 
 class Helper(QVBoxLayout):
     def __init__(self, parent=None):
@@ -59,10 +59,10 @@ class Form(QVBoxLayout):
         self.segments.inpLayout = QHBoxLayout()
         self.segments.inpLayout.leA = QLineEdit()
         self.segments.inpLayout.leA.setPlaceholderText('a')
-        self.segments.inpLayout.leA.setValidator(QIntValidator())
+        self.segments.inpLayout.leA.setValidator(QDoubleValidator())
         self.segments.inpLayout.leB = QLineEdit()
         self.segments.inpLayout.leB.setPlaceholderText('b')
-        self.segments.inpLayout.leB.setValidator(QIntValidator())
+        self.segments.inpLayout.leB.setValidator(QDoubleValidator())
         self.segments.inpLayout.addWidget(self.segments.inpLayout.leA)
         self.segments.inpLayout.addWidget(self.segments.inpLayout.leB)
         self.segments.addWidget(self.segments.label)
@@ -75,7 +75,7 @@ class Form(QVBoxLayout):
         self.parts = QFormLayout()
         self.parts.label = QLabel('Введите количество участков: ')
         self.parts.le = QLineEdit()
-        self.parts.le.setValidator(QIntValidator())
+        self.parts.le.setValidator(QDoubleValidator())
         self.parts.addWidget(self.parts.label)
         self.parts.addWidget(self.parts.le)
         
@@ -86,7 +86,7 @@ class Form(QVBoxLayout):
         self.y0 = QFormLayout()
         self.y0.label = QLabel('Введите значение функции в точке f(a):')
         self.y0.le = QLineEdit()
-        self.y0.le.setValidator(QIntValidator())
+        self.y0.le.setValidator(QDoubleValidator())
         self.y0.addWidget(self.y0.label)
         self.y0.addWidget(self.y0.le)
 
