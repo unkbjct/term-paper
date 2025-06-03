@@ -33,6 +33,8 @@ class Form(QVBoxLayout):
 
         layout = QFormLayout()
 
+        self.isOpenGraph = False
+
         self.function = QVBoxLayout()
         self.function.label = QLabel('Введите правую часть функции:')
         self.function.inpLayout = QHBoxLayout()
@@ -97,7 +99,10 @@ class Form(QVBoxLayout):
         self.method.cb = QComboBox()
         self.method.cb.addItem('Метод Эйлера', 0)
         self.method.cb.addItem('Метод Хона', 1)
-        self.method.cb.addItem('Сравнить оба метода', 2)
+        self.method.cb.addItem('Улучшенный метод Эйлера', 2)
+        self.method.cb.addItem('Метод Рунге Кутта', 3)
+        self.method.cb.addItem('Метод Адамса', 4)
+        self.method.cb.addItem('Все методы', 5)
         self.method.addWidget(self.method.label)
         self.method.addWidget(self.method.cb)
 
@@ -118,6 +123,10 @@ class Form(QVBoxLayout):
         helper = Helper()
 
     def calculate(self):
+        if self.isOpenGraph:
+            self.isOpenGraph = False
+            plt.close()
+
         formula = self.function.inpLayout.le.text()
         a = self.segments.inpLayout.leA.text()
         b = self.segments.inpLayout.leB.text()
@@ -128,18 +137,40 @@ class Form(QVBoxLayout):
 
         try:
             a, b, n, y0 = float(a), float(b), float(n), float(y0)
+            
+            x, y = 0, 0
 
             if method == 0:
                 x, y = core.euler(formula, a, b, n, y0)
                 plt.plot(x, y, label=r'Метод Эйлера', color='b')
             elif method == 1:
                 x, y = core.hoyne(formula, a, b, n, y0)
-                plt.plot(x, y, label=r'Метод Хойна', color='b')
+                plt.plot(x, y, label=r'Метод Хойна', color='r')
+            elif method == 2:
+                x, y = core.besteuler(formula, a, b, n, y0)
+                plt.plot(x, y, label=r'Улучшенный метод Ейлера', color='g')
+            elif method == 3:
+                x, y = core.kyt(formula, a, b, n, y0)
+                plt.plot(x, y, label=r'Рунге Кутт', color='y')
+            elif method == 4:
+                x, y = core.adams(formula, a, b, n, y0)
+                plt.plot(x, y, label=r'Адамс', color='purple')
             else:
                 x, y = core.euler(formula, a, b, n, y0)
                 plt.plot(x, y, label=r'Метод Эйлера', color='b')
                 x, y = core.hoyne(formula, a, b, n, y0)
                 plt.plot(x, y, label=r'Метод Хойна', color='r')
+                x, y = core.besteuler(formula, a, b, n, y0)
+                plt.plot(x, y, label=r'Улучшенный метод Ейлера', color='g')
+                x, y = core.kyt(formula, a, b, n, y0)
+                plt.plot(x, y, label=r'Рунге Кутт', color='y')
+                x, y = core.adams(formula, a, b, n, y0)
+                plt.plot(x, y, label=r'Адамс', color='purple')
+
+            if n < 15:
+                plt.plot(x, y, 'o', color='black')
+
+            self.isOpenGraph = True
 
         except ValueError:
             msg = QMessageBox()
@@ -158,9 +189,6 @@ class Form(QVBoxLayout):
             msg.setDefaultButton(QMessageBox.StandardButton.Ok)
             msg.exec()
             return
-
-        plt.axhline(0, color='black', linewidth=1)
-        plt.axvline(0, color='black', linewidth=1)
 
         plt.legend()
         plt.xlabel("x")
